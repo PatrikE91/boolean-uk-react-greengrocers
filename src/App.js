@@ -2,6 +2,7 @@ import './styles/reset.css'
 import './styles/index.css'
 
 import initialStoreItems from './store-items'
+import { useState } from 'react'
 
 /*
 Here's what a store item should look like
@@ -14,24 +15,110 @@ Here's what a store item should look like
 What should a cart item look like? 🤔
 */
 
-console.log(initialStoreItems)
-
 export default function App() {
   // Setup state here...
+  const [store, setStore] = useState(initialStoreItems)
+  const [cart, setCart] = useState([])
+  
+
+  const addToCart = item => {
+    if (cart.some(e => e.id === item.id)) {
+      item.quantity++
+      item.price = 0.35 * item.quantity
+
+      setCart([...cart])
+    } else {
+      item.quantity = 1
+      setCart(current => [...current, item])
+    }
+    return
+  }
+
+  const increaseButton = item => {
+    item.quantity++
+    setCart([...cart])
+    sum()
+  }
+
+  const decreseButton = item => {
+    if (item.quantity === 0) {
+      cart.map(element => item.id !== element.id)
+      return console.log('test', cart)
+    }
+    item.quantity--
+    setCart([...cart])
+  }
+
+  const sum = () => {
+    if (cart.length === 0) {
+      return '£ 0.00'
+    }
+
+    const cartTotal = cart.reduce((currentTotal, item) => {
+      
+      const newTotal = item.price * item.quantity + currentTotal
+    
+      return newTotal
+    }, 0)
+    
+    const sumTotalRounded = `£ ${Number(cartTotal).toFixed(2)}`
+    console.log(sumTotalRounded)
+    return sumTotalRounded
+  }
+ const testSum = sum()
+  
 
   return (
     <>
       <header id="store">
         <h1>Greengrocers</h1>
         <ul className="item-list store--item-list">
-          {/* Wrtite some code here... */}
+          {store.map(item => {
+            return (
+              <li key={item.id}>
+                <div className="store--item-icon">
+                  <img
+                    src={'/assets/icons/' + item.id + '.svg'}
+                    alt={item.name}
+                  />
+                </div>
+                <button onClick={() => addToCart(item)}>Add to cart</button>
+              </li>
+            )
+          })}
         </ul>
       </header>
       <main id="cart">
         <h2>Your Cart</h2>
         <div className="cart--item-list-container">
           <ul className="item-list cart--item-list">
-            {/* Wrtite some code here... */}
+            {cart.map(item => {
+              return (
+                <li key={item.id}>
+                  <img
+                    className="cart--item-icon"
+                    src={'assets/icons/' + item.id + '.svg'}
+                    alt={item.name}
+                  />
+                  <p>{item.name}</p>
+                  <button
+                    onClick={() =>
+                      item.quantity <= 1 ? test(item) : decreseButton(item)
+                    }
+                    className="quantity-btn remove-btn center"
+                  >
+                    -
+                  </button>
+                  <span className="quantity-text center">{item.quantity}</span>
+                  <button
+                    onClick={() => increaseButton(item)}
+                    className="quantity-btn add-btn center"
+                  >
+                    +
+                  </button>
+                </li>
+              )
+            })}
           </ul>
         </div>
         <div className="total-section">
@@ -39,7 +126,7 @@ export default function App() {
             <h3>Total</h3>
           </div>
           <div>
-            <span className="total-number">£0.00</span>
+            <span className="total-number">{testSum}</span>
           </div>
         </div>
       </main>
