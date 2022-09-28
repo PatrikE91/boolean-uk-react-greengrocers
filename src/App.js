@@ -18,8 +18,8 @@ What should a cart item look like? 🤔
 export default function App() {
   // Setup state here...
   const [store, setStore] = useState(initialStoreItems)
-  const [cart, setCart] = useState([])
   
+  const [cart, setCart] = useState([])
 
   const addToCart = item => {
     if (cart.some(e => e.id === item.id)) {
@@ -49,29 +49,57 @@ export default function App() {
     setCart([...cart])
   }
 
+  const alphabeticOrder = () => {
+    const compare = (a,b) => {
+      let nameA = a.name.toLowerCase()
+      let nameB = b.name.toLowerCase()
+      return (nameA < nameB) ? -1 : (nameA > nameB) ? 1 : 0
+    }
+    const newS = store.slice().sort(compare)
+    setStore(newS)
+  }
+
   const sum = () => {
     if (cart.length === 0) {
       return '£ 0.00'
     }
 
     const cartTotal = cart.reduce((currentTotal, item) => {
-      
       const newTotal = item.price * item.quantity + currentTotal
-    
+
       return newTotal
     }, 0)
-    
+
     const sumTotalRounded = `£ ${Number(cartTotal).toFixed(2)}`
     console.log(sumTotalRounded)
     return sumTotalRounded
   }
- const testSum = sum()
-  
+  const testSum = sum()
+
+  const fruitOnly = () => {
+    setStore(initialStoreItems)
+    const fruitStore = []
+    store.forEach(e => (e.type === 'fruit' ? fruitStore.push(e) : e))
+    setStore(fruitStore)
+    return
+  }
+
+  const veOnly = () => {
+    setStore(initialStoreItems)
+    const fruitStore = []
+    store.forEach(e => (e.type === 'vegetable' ? fruitStore.push(e) : e))
+    setStore(fruitStore)
+    return
+  }
 
   return (
     <>
       <header id="store">
         <h1>Greengrocers</h1>
+        <button onClick={() => setStore(initialStoreItems)}>All Items</button>
+        <button onClick={() => fruitOnly()}>Fruit Only</button>
+        <button onClick={() => veOnly()}>Veg Only</button>
+        <button onClick={() => alphabeticOrder()}>Filter by Name</button>
         <ul className="item-list store--item-list">
           {store.map(item => {
             return (
