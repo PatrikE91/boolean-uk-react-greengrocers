@@ -19,12 +19,12 @@ export default function App() {
   // Setup state here...
   const [store, setStore] = useState(initialStoreItems)
   const [cart, setCart] = useState([])
-  
 
   const addToCart = item => {
     if (cart.some(e => e.id === item.id)) {
       item.quantity++
       item.price = 0.35 * item.quantity
+
       setCart([...cart])
     } else {
       item.quantity = 1
@@ -39,8 +39,10 @@ export default function App() {
   }
 
   const decreseButton = item => {
-    if (item.quantity === 0) {
-      cart.map(element => item.id !== element.id)
+    if (item.quantity <= 1) {
+      cart.splice(cart.indexOf(item), 1)
+      console.log(cart)
+      setCart([...cart])
       return
     }
     item.quantity--
@@ -53,8 +55,8 @@ export default function App() {
       let nameB = b.name.toLowerCase()
       return nameA < nameB ? -1 : nameA > nameB ? 1 : 0
     }
-    const newS = store.slice().sort(compare)
-    setStore(newS)
+    const newStore = store.slice().sort(compare)
+    setStore(newStore)
   }
 
   const sum = () => {
@@ -65,23 +67,22 @@ export default function App() {
       const newTotal = item.price * item.quantity + currentTotal
       return newTotal
     }, 0)
+
     const sumTotalRounded = `£ ${Number(cartTotal).toFixed(2)}`
     return sumTotalRounded
   }
-  const testSum = sum()
+  const totalSum = sum()
 
-  const fruitOnly = () => {
-    setStore(initialStoreItems)
+  const fruitOnly = () => {   
     const fruitStore = []
-    store.forEach(e => (e.type === 'fruit' ? fruitStore.push(e) : e))
+    initialStoreItems.forEach(e => (e.type === 'fruit' ? fruitStore.push(e) : e))
     setStore(fruitStore)
     return
   }
 
   const veOnly = () => {
-    setStore(initialStoreItems)
     const fruitStore = []
-    store.forEach(e => (e.type === 'vegetable' ? fruitStore.push(e) : e))
+    initialStoreItems.forEach(e => (e.type === 'vegetable' ? fruitStore.push(e) : e))
     setStore(fruitStore)
     return
   }
@@ -136,9 +137,7 @@ export default function App() {
                   />
                   <p>{item.name}</p>
                   <button
-                    onClick={() =>
-                      item.quantity <= 1 ? test(item) : decreseButton(item)
-                    }
+                    onClick={() => decreseButton(item)}
                     className="quantity-btn remove-btn center"
                   >
                     -
@@ -160,7 +159,7 @@ export default function App() {
             <h3>Total</h3>
           </div>
           <div>
-            <span className="total-number">{testSum}</span>
+            <span className="total-number">{totalSum}</span>
           </div>
         </div>
       </main>
