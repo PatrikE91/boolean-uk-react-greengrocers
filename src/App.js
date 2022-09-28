@@ -18,14 +18,13 @@ What should a cart item look like? 🤔
 export default function App() {
   // Setup state here...
   const [store, setStore] = useState(initialStoreItems)
-  const [showDescription, setShowDescription] = (false)
   const [cart, setCart] = useState([])
+  
 
   const addToCart = item => {
     if (cart.some(e => e.id === item.id)) {
       item.quantity++
       item.price = 0.35 * item.quantity
-
       setCart([...cart])
     } else {
       item.quantity = 1
@@ -37,23 +36,22 @@ export default function App() {
   const increaseButton = item => {
     item.quantity++
     setCart([...cart])
-    sum()
   }
 
   const decreseButton = item => {
     if (item.quantity === 0) {
       cart.map(element => item.id !== element.id)
-      return console.log('test', cart)
+      return
     }
     item.quantity--
     setCart([...cart])
   }
 
   const alphabeticOrder = () => {
-    const compare = (a,b) => {
+    const compare = (a, b) => {
       let nameA = a.name.toLowerCase()
       let nameB = b.name.toLowerCase()
-      return (nameA < nameB) ? -1 : (nameA > nameB) ? 1 : 0
+      return nameA < nameB ? -1 : nameA > nameB ? 1 : 0
     }
     const newS = store.slice().sort(compare)
     setStore(newS)
@@ -63,15 +61,11 @@ export default function App() {
     if (cart.length === 0) {
       return '£ 0.00'
     }
-
     const cartTotal = cart.reduce((currentTotal, item) => {
       const newTotal = item.price * item.quantity + currentTotal
-
       return newTotal
     }, 0)
-
     const sumTotalRounded = `£ ${Number(cartTotal).toFixed(2)}`
-    console.log(sumTotalRounded)
     return sumTotalRounded
   }
   const testSum = sum()
@@ -92,6 +86,11 @@ export default function App() {
     return
   }
 
+  const showDescription = item => {
+    item.showText === false ? (item.showText = true) : (item.showText = false)
+    setStore([...store])
+  }
+
   return (
     <>
       <header id="store">
@@ -104,16 +103,18 @@ export default function App() {
           {store.map(item => {
             return (
               <li key={item.id}>
-                <div className="store--item-icon" onClick={() => setShowDescription(!showDescription)}>
-                  {showDescription ? 
-                    (<p>{item.description}</p>)
-                    :
-                    (<img
+                <div
+                  className="store--item-icon"
+                  onClick={() => showDescription(item)}
+                >
+                  {item.showText ? (
+                    <p>{item.description}</p>
+                  ) : (
+                    <img
                       src={'/assets/icons/' + item.id + '.svg'}
                       alt={item.name}
-                    />)
-                  }
-                  
+                    />
+                  )}
                 </div>
                 <button onClick={() => addToCart(item)}>Add to cart</button>
               </li>
