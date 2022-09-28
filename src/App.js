@@ -18,7 +18,7 @@ What should a cart item look like? 🤔
 export default function App() {
   // Setup state here...
   const [store, setStore] = useState(initialStoreItems)
-  
+  const [showDescription, setShowDescription] = (false)
   const [cart, setCart] = useState([])
 
   const addToCart = item => {
@@ -104,11 +104,16 @@ export default function App() {
           {store.map(item => {
             return (
               <li key={item.id}>
-                <div className="store--item-icon">
-                  <img
-                    src={'/assets/icons/' + item.id + '.svg'}
-                    alt={item.name}
-                  />
+                <div className="store--item-icon" onClick={() => setShowDescription(!showDescription)}>
+                  {showDescription ? 
+                    (<p>{item.description}</p>)
+                    :
+                    (<img
+                      src={'/assets/icons/' + item.id + '.svg'}
+                      alt={item.name}
+                    />)
+                  }
+                  
                 </div>
                 <button onClick={() => addToCart(item)}>Add to cart</button>
               </li>
